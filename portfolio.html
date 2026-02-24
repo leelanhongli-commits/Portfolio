@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝闳历 - 个人作品集</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-pink: #FFB6C1;
+            --light-pink: #FFC0CB;
+            --lavender: #E6E6FA;
+            --light-blue: #ADD8E6;
+            --deep-purple: #9370DB;
+            --background: #FFF8DC;
+            --dark-gray: #333;
+            --card-pink: #FFF0F5;
+            --card-blue: #F0F8FF;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--background);
+            color: var(--dark-gray);
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .pixel-border {
+            border: 2px solid var(--primary-pink);
+            box-shadow: 2px 2px 0 var(--deep-purple);
+        }
+
+        .pixel-shadow {
+            text-shadow: 2px 2px 0 var(--deep-purple);
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 20px;
+            border: 2px solid var(--deep-purple);
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-pink), var(--light-pink));
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: var(--deep-purple);
+            margin-top: 10px;
+        }
+
+        .welcome-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .pixel-clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            font-size: 40px;
+            animation: floatCloud 20s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        .welcome-title {
+            font-size: 64px;
+            color: var(--deep-purple);
+            text-align: center;
+            margin-bottom: 60px;
+            animation: pixelWave 2s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes pixelWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .enter-btn {
+            width: 200px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--primary-pink), var(--light-pink));
+            border: 4px solid var(--deep-purple);
+            border-radius: 4px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            color: var(--deep-purple);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .enter-btn:hover {
+            animation: pixelBlink 0.3s ease-in-out infinite;
+            filter: brightness(1.1);
+            transform: scale(1.05);
+        }
+
+        .enter-btn:active {
+            transform: scale(0.98) translateY(2px);
+        }
+
+        @keyframes pixelBlink {
+            0%, 100% { box-shadow: 0 0 5px var(--deep-purple); }
+            50% { box-shadow: 0 0 20px var(--deep-purple), 0 0 30px var(--primary-pink); }
+        }
+
+        .pixel-stars {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            font-size: 20px;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-pink);
+            margin: 0 auto 20px;
+            transition: transform 0.5s ease;
+            background-image: url('profile.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .avatar:hover {
+            transform: rotate(360deg);
+        }
+
+        .name {
+            font-size: 36px;
+            color: var(--deep-purple);
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            color: var(--primary-pink);
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--deep-purple);
+        }
+
+        .education-section {
+            margin-bottom: 60px;
+        }
+
+        .education-cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .animation-area {
+            width: 200px;
+            height: 120px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pixel-character {
+            width: 30px;
+            height: 40px;
+            position: relative;
+            animation: run 2s linear infinite;
+        }
+
+        .pixel-character::before {
+            content: '👤';
+            font-size: 30px;
+            color: var(--light-blue);
+        }
+
+        @keyframes run {
+            0% { transform: translateX(-60px); }
+            100% { transform: translateX(60px); }
+        }
+
+        .arrow {
+            width: 80px;
+            height: 2px;
+            background: var(--deep-purple);
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            border-left: 10px solid var(--deep-purple);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        .coming-soon {
+            font-size: 14px;
+            color: var(--deep-purple);
+            text-align: center;
+        }
+
+        @media (max-width: 767px) {
+            .animation-area {
+                width: 150px;
+                height: 100px;
+            }
+
+            .pixel-character {
+                width: 25px;
+                height: 35px;
+            }
+
+            .pixel-character::before {
+                font-size: 25px;
+            }
+
+            .arrow {
+                width: 60px;
+            }
+
+            .coming-soon {
+                font-size: 12px;
+            }
+        }
+
+        .education-card {
+            background: var(--card-pink);
+            border: 2px solid var(--primary-pink);
+            padding: 20px;
+            border-radius: 4px;
+            width: 280px; /* 设置固定宽度 */
+            height: 180px; /* 设置固定高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 使内容均匀分布 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .education-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 4px 4px 0 var(--deep-purple);
+        }
+
+        .education-card h3 {
+            font-size: 20px;
+            color: var(--deep-purple);
+            margin-bottom: 10px;
+        }
+
+        .education-card p {
+            margin: 5px 0;
+        }
+
+        .internship-section {
+            margin-bottom: 60px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--primary-pink) 0,
+                var(--primary-pink) 5px,
+                transparent 5px,
+                transparent 10px
+            );
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: pixelBounce 0.5s ease;
+        }
+
+        @keyframes pixelBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            top: 10px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-pink);
+            border: 2px solid var(--deep-purple);
+        }
+
+        .internship-card {
+            background: var(--card-blue);
+            border: 2px solid var(--lavender);
+            padding: 20px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .internship-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 0 var(--deep-purple);
+            border-color: var(--primary-pink);
+            animation: pixelBorderFlash 0.5s ease;
+        }
+
+        @keyframes pixelBorderFlash {
+            0%, 100% { border-color: var(--lavender); }
+            50% { border-color: var(--primary-pink); }
+        }
+
+        .internship-card h3 {
+            font-size: 18px;
+            color: var(--deep-purple);
+            margin-bottom: 5px;
+        }
+
+        .internship-period {
+            font-size: 14px;
+            color: var(--primary-pink);
+            margin-bottom: 15px;
+        }
+
+        .internship-content {
+            list-style: none;
+        }
+
+        .internship-content li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .internship-content li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary-pink);
+            font-size: 12px;
+        }
+
+        .portfolio-section {
+            margin-bottom: 60px;
+        }
+
+        .portfolio-subtitle {
+            text-align: center;
+            color: #999;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .portfolio-link {
+            text-align: center;
+            color: var(--deep-purple);
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .portfolio-link a {
+            color: var(--deep-purple);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary-pink);
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-link a:hover {
+            color: var(--primary-pink);
+            border-color: var(--deep-purple);
+        }
+
+        .portfolio-category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            color: var(--deep-purple);
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-pink);
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .portfolio-card {
+            background: var(--card-pink);
+            border: 2px solid var(--primary-pink);
+            padding: 20px;
+            border-radius: 4px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-card:hover {
+            transform: scale(1.02);
+            box-shadow: 4px 4px 0 var(--deep-purple);
+        }
+
+        .portfolio-card h4 {
+            font-size: 18px;
+            color: var(--deep-purple);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .portfolio-card p {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
+
+        .portfolio-date {
+            font-size: 12px;
+            color: var(--primary-pink);
+            text-align: right;
+        }
+
+        .guestbook-section {
+            margin-bottom: 60px;
+        }
+
+        .guestbook-prompt {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: var(--deep-purple);
+        }
+
+        .guestbook-form {
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .guestbook-textarea {
+            width: 80%;
+            height: 100px;
+            background: var(--card-pink);
+            border: 2px solid var(--primary-pink);
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            resize: vertical;
+            display: block;
+            margin: 0 auto 15px;
+        }
+
+        .guestbook-textarea:focus {
+            outline: none;
+            border-color: var(--deep-purple);
+            box-shadow: 2px 2px 0 var(--deep-purple);
+        }
+
+        .submit-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 30px;
+            background: linear-gradient(to bottom, var(--primary-pink), var(--light-pink));
+            border: 2px solid var(--deep-purple);
+            border-radius: 4px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: var(--deep-purple);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            animation: pixelBlink 0.3s ease-in-out infinite;
+            transform: scale(1.05);
+        }
+
+        .guestbook-display {
+            max-width: 600px;
+            margin: 0 auto;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .guestbook-message {
+            background: var(--card-blue);
+            border: 2px solid var(--lavender);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .guestbook-message:hover {
+            border-color: var(--primary-pink);
+            transform: translateX(5px);
+        }
+
+        .message-content {
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: var(--primary-pink);
+            text-align: right;
+        }
+
+        .contact-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            background: var(--card-pink);
+            border: 2px solid var(--primary-pink);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--dark-gray);
+        }
+
+        .contact-item:hover {
+            border-color: var(--deep-purple);
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 0 var(--deep-purple);
+        }
+
+        .contact-icon {
+            font-size: 24px;
+        }
+
+        .contact-text {
+            font-size: 16px;
+        }
+
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: pixelBounce 0.5s ease;
+        }
+
+        @media (max-width: 1199px) {
+            .timeline {
+                padding-left: 30px;
+            }
+
+            .education-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 767px) {
+            .welcome-title {
+                font-size: 32px;
+            }
+
+            .avatar {
+                width: 150px;
+                height: 150px;
+            }
+
+            .name {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .education-card {
+                width: 100%; /* 移动端使用100%宽度 */
+                max-width: 300px; /* 限制最大宽度 */
+                height: auto; /* 移动端高度自动调整 */
+            }
+
+            .timeline {
+                padding-left: 25px;
+            }
+
+            .timeline::before {
+                left: 8px;
+            }
+
+            .timeline-dot {
+                left: -26px;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .guestbook-textarea {
+                width: 100%;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .contact-item {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .portfolio-card {
+                height: auto;
+            }
+        }
+
+        /* 背景元素容器 */
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 像素白云 */
+        .pixel-cloud {
+            position: absolute;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+            animation: floatCloud 15s linear infinite;
+        }
+
+        /* 像素绿树 */
+        .pixel-tree {
+            position: absolute;
+            font-size: 100px;
+            bottom: 0;
+        }
+
+        /* 像素小狗 */
+        .pixel-dog {
+            position: absolute;
+            font-size: 30px;
+            bottom: 20px;
+            right: 20px;
+            animation: dogMove 8s ease-in-out infinite;
+        }
+
+
+
+        /* 像素星星 */
+        .pixel-star {
+            position: absolute;
+            font-size: 16px;
+            color: var(--deep-purple);
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        /* 像素草地 */
+        .pixel-grass {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to top, #98FB98, transparent);
+            opacity: 0.6;
+        }
+
+        /* 动画效果 */
+        @keyframes floatCloud {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes dogMove {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-20px); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 767px) {
+            .pixel-cloud { font-size: 25px; }
+            .pixel-tree { font-size: 70px; }
+            .pixel-dog { font-size: 20px; }
+            .pixel-star { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-elements"></div>
+    <div class="loading-screen" id="loading-screen">
+        <div class="pixel-font" style="font-size: 24px; color: var(--deep-purple);">LOADING</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loading-progress"></div>
+        </div>
+        <div class="loading-text" id="loading-text">0%</div>
+    </div>
+
+    <div class="welcome-page" id="welcome-page" style="display: none;">
+        <div class="pixel-clouds" id="pixel-clouds"></div>
+        <h1 class="welcome-title pixel-font">欢迎访问<br>感谢停留</h1>
+        <button class="enter-btn pixel-font" onclick="enterSite()">点击进入</button>
+        <div class="pixel-stars" id="pixel-stars"></div>
+    </div>
+
+    <div class="main-content" id="main-content">
+        <header class="header-section scroll-animate">
+            <div class="avatar"></div>
+            <h1 class="name pixel-font">蓝闳历</h1>
+        </header>
+
+        <section class="education-section scroll-animate">
+            <h2 class="section-title pixel-font">教育经历</h2>
+            <div class="education-cards">
+                <div class="education-card">
+                    <h3 class="pixel-font">中央民族大学</h3>
+                    <p><strong>学位：</strong>本科</p>
+                    <p><strong>专业：</strong>翻译</p>
+                    <p><strong>时间：</strong>2022-2026</p>
+                </div>
+                <div class="animation-area">
+                    <div class="pixel-character"></div>
+                    <div class="arrow"></div>
+                    <div class="coming-soon pixel-font">即将入学</div>
+                </div>
+                <div class="education-card">
+                    <h3 class="pixel-font">香港中文大学</h3>
+                    <p><strong>学位：</strong>管理学硕士（MIM）</p>
+                    <p><strong>入学时间：</strong>2026年8月</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="internship-section scroll-animate">
+            <h2 class="section-title pixel-font">实习经历</h2>
+            <div class="timeline" id="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="internship-card">
+                        <h3 class="pixel-font">北京神州数码有限公司</h3>
+                        <p class="internship-period">市场实习生 | 2025.07-至今</p>
+                        <ul class="internship-content">
+                            <li>对企业级AI在医药行业的应用场景和潜在客户进行调研，支持神州实现商业化策略的形成，在神州数码的客户基础上叠加行业形象力、信息化发展程度综合得出Top List客户。同时优化SDR话术并主动与客户建联。</li>
+                            <li>完善MA系统SDR工作规范，并搭建飞书多维表格，运用AI工作流为市场活动效果提供可量化、可视化反馈。按区域、行业、规模等标签对线索进行标记，并规范分值系统，按行为路径对线索进行打分，聚焦高分值线索，精准触达，将线索转化效率提升20%。</li>
+                            <li>竞品分析。深入调研百度、字节跳动、阿里巴巴等头部企业旗下的AI应用开发平台，使用coze搭建竞品分析工作流，极大提升竞品分析效率。从产品建设重点、行业拓展策略、产品定价策略等维度与我司产品进行对比分析，基于调研结果提出差异化的营销策略。</li>
+                            <li>更新神州问学产品手册。在实际使用与熟悉产品的过程中，发掘产品卖点，成功编写一套获得产品经理高度评价且可供销售团队直接使用的产品用户手册。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="internship-card">
+                        <h3 class="pixel-font">内蒙古伊利实业集团股份有限公司</h3>
+                        <p class="internship-period">数字营销实习生 | 2024.12-2025.03</p>
+                        <ul class="internship-content">
+                            <li>运营舒化、QQ星的全媒体运营，根据市场风向与品牌主题活动进行内容策划、评论互动和数据分析。</li>
+                            <li>内容营销，追踪网络热点，在职期间累计产出图文内容30+，获赞藏数4000+，双小红书账号累计涨粉2000+。</li>
+                            <li>协助数字传播经理开展品牌营销项目，深度参与舒化"马龙出马送舒化"，QQ星"天生小孩必有用"自媒体长线项目，分析目标受众，负责周边制作。</li>
+                            <li>筛选与品牌风格匹配的KOL，起草合作Brief。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="internship-card">
+                        <h3 class="pixel-font">北京水木梧桐创业投资管理有限公司</h3>
+                        <p class="internship-period">HR实习生 | 2024.09-2024.12</p>
+                        <ul class="internship-content">
+                            <li>负责本公司多个金融高端职位招聘：机构募资合伙人、募资IR、FA顾问等。成功招聘一位机构募资合伙人，间接为公司拓展政府引导基金、机构资金等募资渠道，预估增加基金管理规模20亿。根据公司产品宣传部业务需求主动给出人才画像，进行团队建设，为产品部建立了一支高效的宣发团队，得到负责人认可。</li>
+                            <li>为多个孵化企业进行招聘，入职多位FA顾问、工业机器人销售。每日筛选200+份简历，进面率达80%。</li>
+                            <li>主动学习和了解募、投、管、退全流程。充分了解公司组织架构和投资业务，主动电话沟通高端人才，与合伙人级别候选人对话能自如应答不怯场。</li>
+                            <li>能够主动分析和总结问题，深入解读岗位jd，了解岗位核心需求。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="internship-card">
+                        <h3 class="pixel-font">北京创业酵母管理咨询有限公司</h3>
+                        <p class="internship-period">HRBP实习生 | 2024.08-2024.09</p>
+                        <ul class="internship-content">
+                            <li>协助各岗位的招聘工作，如简历筛选、面试安排等</li>
+                            <li>进行第一轮的电话面试，对候选人意向与胜任力进行判断</li>
+                            <li>进行招聘需求对接、终试跟进、入职沟通等事项</li>
+                            <li>完成上级交代的其他工作</li>
+                        </ul>
+                        <p style="margin-top: 10px; color: var(--primary-pink);"><strong>实习成果：</strong>每日浏览数百份简历，为公司销售岗与运营岗输入多位人才，成为BOSS直聘周最受欢迎BOSS</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-section scroll-animate">
+            <h2 class="section-title pixel-font">作品集</h2>
+            <p class="portfolio-subtitle">详细作品可在网盘链接查看</p>
+            <div class="portfolio-link">链接: <a href="https://pan.baidu.com/s/1_PblMMNUmrnsvOORH2Lajg?pwd=zi5m" target="_blank">https://pan.baidu.com/s/1_PblMMNUmrnsvOORH2Lajg?pwd=zi5m</a></div>
+            <div class="portfolio-link">提取码: zi5m</div>
+            
+            <div class="portfolio-category">
+                <h3 class="category-title pixel-font">Vibe Coding及AI工作流</h3>
+                <div class="portfolio-grid">
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">神州问学竞品资讯搜集工作流</h4>
+                        <p>构建一个全自动化的AI大模型平台资讯搜集工作流，实现多源数据自动采集、智能过滤与整合、结构化呈现、定时推送等功能。</p>
+                    </div>
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">神州问学SDR多维表格</h4>
+                        <p>搭建搭载AI工作流的飞书多维表格用于管理销售线索，有助于提前了解客户公司的核心产品、主营业务，提高沟通的有效性。使线索沟通情况可视化。</p>
+                    </div>
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">UI Extractor</h4>
+                        <p>浏览器插件，将网页DOM结构和计算样式保存，打包成标准化设计规则文档，为AI开发工具提供精准设计系统上下文。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-category">
+                <h3 class="category-title pixel-font">营销项目</h3>
+                <div class="portfolio-grid">
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">马龙出马送舒化</h4>
+                        <p>总曝光量达1.79亿，品牌声量环比提升405.79%，广告覆盖人群拉新占比高达98%，小红书自然产出UGC内容1000+条</p>
+                        <p style="margin-top: 10px;"><strong>本人主要负责：</strong>"废话文学"竞品案例分析、周边制作</p>
+                    </div>
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">天生小孩必有用长线项目</h4>
+                        <p>QQ星品牌长线营销项目</p>
+                        <p style="margin-top: 10px;"><strong>本人主要负责：</strong>撰写短视频脚本、监控汇总微信视频号、小红书社媒数据并制作日报/周报</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-category">
+                <h3 class="category-title pixel-font">AI视频作品集</h3>
+                <div class="portfolio-grid">
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">《QQ星之我要当太空人》</h4>
+                        <div class="portfolio-date">创作时间：2025.03</div>
+                    </div>
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">《舒化之疾速追杀》</h4>
+                        <div class="portfolio-date">创作时间：2025.03</div>
+                    </div>
+                    <div class="portfolio-card">
+                        <h4 class="pixel-font">《深渊的低语》</h4>
+                        <div class="portfolio-date">创作时间：2025.12</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="guestbook-section scroll-animate">
+            <h2 class="section-title pixel-font">留言板</h2>
+            <p class="guestbook-prompt">请留下您宝贵的建议</p>
+            <div class="guestbook-form">
+                <textarea class="guestbook-textarea" id="guestbook-input" placeholder="写下您的留言..."></textarea>
+                <button class="submit-btn pixel-font" onclick="submitMessage()">提交留言</button>
+            </div>
+            <div class="guestbook-display" id="guestbook-display"></div>
+        </section>
+
+        <section class="contact-section scroll-animate">
+            <h2 class="section-title pixel-font">联系我</h2>
+            <div class="contact-info">
+                <a href="javascript:void(0)" class="contact-item">
+                    <span class="contact-icon">💬</span>
+                    <span class="contact-text">微信：wytlbj</span>
+                </a>
+                <a href="tel:15277390395" class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    <span class="contact-text">手机：15277390395</span>
+                </a>
+                <a href="mailto:15277390395@163.com" class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <span class="contact-text">邮箱：15277390395@163.com</span>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const siteData = {
+            name: "蓝闳历",
+            education: [
+                { school: "中央民族大学", degree: "本科", major: "翻译", period: "2022-2026" },
+                { school: "香港中文大学", degree: "管理学硕士（MIM）", period: "2025年8月入学" }
+            ],
+            internships: [
+                {
+                    company: "北京神州数码有限公司",
+                    role: "市场实习生",
+                    period: "2025.07-至今",
+                    content: [
+                        "对企业级AI在医药行业的应用场景和潜在客户进行调研，支持神州实现商业化策略的形成...",
+                        "完善MA系统SDR工作规范，并搭建飞书多维表格...",
+                        "竞品分析。深入调研百度、字节跳动、阿里巴巴等头部企业...",
+                        "更新神州问学产品手册..."
+                    ]
+                }
+            ],
+            contact: {
+                wechat: "wytlbj",
+                phone: "15277390395",
+                email: "15277390395@163.com"
+            }
+        };
+
+        let messages = JSON.parse(localStorage.getItem('guestbookMessages')) || [
+            { content: "网站设计很棒，像素风格很有特色！", time: "2025-02-20 14:30" },
+            { content: "作品集内容丰富，期待更多作品！", time: "2025-02-21 09:15" },
+            { content: "加油！祝你求职顺利！", time: "2025-02-22 16:45" }
+        ];
+
+        function createClouds() {
+            const cloudsContainer = document.getElementById('pixel-clouds');
+            const cloudChars = ['☁', '☁', '☁'];
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.textContent = cloudChars[Math.floor(Math.random() * cloudChars.length)];
+                cloud.style.left = `${Math.random() * 100}%`;
+                cloud.style.top = `${Math.random() * 150}px`;
+                cloud.style.animationDelay = `${Math.random() * 20}s`;
+                cloudsContainer.appendChild(cloud);
+            }
+        }
+
+        function createStars() {
+            const starsContainer = document.getElementById('pixel-stars');
+            const starChars = ['★', '✦', '✧'];
+            for (let i = 0; i < 30; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.textContent = starChars[Math.floor(Math.random() * starChars.length)];
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 280}px`;
+                star.style.animationDelay = `${Math.random() * 1.5}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function showWelcome() {
+            document.getElementById('welcome-page').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'none';
+        }
+
+        function enterSite() {
+            const welcomePage = document.getElementById('welcome-page');
+            const mainContent = document.getElementById('main-content');
+            
+            welcomePage.style.opacity = '0';
+            welcomePage.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                welcomePage.style.display = 'none';
+                mainContent.style.display = 'block';
+                setTimeout(() => {
+                    mainContent.classList.add('visible');
+                    observeElements();
+                }, 50);
+            }, 500);
+        }
+
+        function observeElements() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.scroll-animate').forEach(el => {
+                observer.observe(el);
+            });
+
+            document.querySelectorAll('.timeline-item').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        function submitMessage() {
+            const input = document.getElementById('guestbook-input');
+            const content = input.value.trim();
+            
+            if (content) {
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                
+                messages.unshift({ content, time: timeStr });
+                localStorage.setItem('guestbookMessages', JSON.stringify(messages));
+                
+                input.value = '';
+                renderMessages();
+            }
+        }
+
+        function renderMessages() {
+            const display = document.getElementById('guestbook-display');
+            display.innerHTML = messages.map(msg => `
+                <div class="guestbook-message">
+                    <div class="message-content">${msg.content}</div>
+                    <div class="message-time">${msg.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function simulateLoading() {
+            const progress = document.getElementById('loading-progress');
+            const text = document.getElementById('loading-text');
+            const loadingScreen = document.getElementById('loading-screen');
+            
+            let percent = 0;
+            const interval = setInterval(() => {
+                percent += Math.random() * 15;
+                if (percent >= 100) {
+                    percent = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            showWelcome();
+                        }, 500);
+                    }, 300);
+                }
+                
+                progress.style.width = `${percent}%`;
+                text.textContent = `${Math.floor(percent)}%`;
+            }, 100);
+        }
+
+        function createBackgroundElements() {
+            const container = document.querySelector('.background-elements');
+            
+            // 创建白云
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'pixel-cloud';
+                cloud.textContent = '☁';
+                cloud.style.left = `${Math.random() * 100}%`;
+                cloud.style.top = `${Math.random() * 40}%`;
+                cloud.style.animationDelay = `${Math.random() * 15}s`;
+                cloud.style.animationDuration = `${10 + Math.random() * 10}s`;
+                container.appendChild(cloud);
+            }
+            
+            // 创建绿树
+            const tree1 = document.createElement('div');
+            tree1.className = 'pixel-tree';
+            tree1.textContent = '🌲';
+            tree1.style.left = '10px';
+            container.appendChild(tree1);
+            
+            const tree2 = document.createElement('div');
+            tree2.className = 'pixel-tree';
+            tree2.textContent = '🌲';
+            tree2.style.right = '10px';
+            container.appendChild(tree2);
+            
+            // 创建小狗
+            const dog = document.createElement('div');
+            dog.className = 'pixel-dog';
+            dog.textContent = '🐶';
+            container.appendChild(dog);
+            
+            // 创建花朵（已移除红色花朵）
+            
+            // 创建星星
+            for (let i = 0; i < 10; i++) {
+                const star = document.createElement('div');
+                star.className = 'pixel-star';
+                star.textContent = '⭐';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 60}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(star);
+            }
+            
+            // 创建草地
+            const grass = document.createElement('div');
+            grass.className = 'pixel-grass';
+            container.appendChild(grass);
+        }
+
+        window.onload = function() {
+            createBackgroundElements();
+            createClouds();
+            createStars();
+            renderMessages();
+            simulateLoading();
+        };
+    </script>
+</body>
+</html>
